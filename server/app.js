@@ -1,7 +1,7 @@
 // DO NOT EDIT - Initialize Express, handle JSON requests
 const express = require('express');
 const app = express();
-
+const path = require("path")
 app.use(express.json());
 
 /**
@@ -9,7 +9,9 @@ app.use(express.json());
  *     Method: GET
  *     Route: /version
  *     Response (Text): "1.0.0"
- */
+ */app.get("/version",(req,res)=> {
+    res.status(200).send("1.0.0")
+ })
 // Your code here
 
 /**
@@ -29,7 +31,17 @@ app.use(express.json());
  *  combined with the id sent as a route parameter in the url
  */
 // Your code here
-
+app.get("/viewers/:id",(req,res)=> {
+    let id = req.params.id;
+    let user = {
+        id: id,
+        firstName: "Ali",
+        lastName: "Awada",
+        birthDate: "4/10/2002",
+        favoriteMovies: ["nWordInParis","blackMonkey","yoooow"]
+    }
+    res.status(200).json(user)
+})
 /** Basic Phase 3 - Query params in URL
  *      Method: GET
  *      Route: /info
@@ -48,7 +60,16 @@ app.use(express.json());
  *          message required
  */
 // Your code here
+app.get("/info",(req,res)=> {
+    let message = req.query.message;
 
+    if(!message) {
+        res.status(200).send("message required")
+    } else {
+        res.status(200).send(message);
+    }
+
+})
 /**
  *  IMPORTANT: Scroll to the top for basic phases.
  *
@@ -82,7 +103,18 @@ app.use(express.json());
  *          { "id": 98765432, "name": "Honey Sweet", "year": 1967, "isFavorite": false }
  */
 // Your code here
-
+app.post("/movies",(req,res)=> {
+    let {name,year,favorite} = req.body;
+    let randomId = Math.floor(Math.random() * 10000000);
+   
+    const movie = {
+        id: randomId,
+        name: name,
+        year: Number(year),
+        isFavorite: !!favorite
+    }
+    res.status(200).json(movie)
+ })
 /**
  *  Advanced Bonus Phase B - Research how to return static
  *                           files in a public folder
@@ -99,6 +131,16 @@ app.use(express.json());
  *      Test route: /logo.png
  */
 // Your code here
+
+
+// Serve static files from the 'public' directory
+app.use(express.static(path.join(__dirname, 'public')));
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
 
 // DO NOT EDIT - Set port and listener
 if (require.main === module) {
